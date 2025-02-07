@@ -1,0 +1,1 @@
+# generate_dengen_beacon_bff
