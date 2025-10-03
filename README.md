@@ -5,7 +5,7 @@ It takes raw VCF files and metadata from DenGen, processes them, and produces me
 
 Note: This pipeline can be adapted for other datasets, making it reusable for any Beacon implementation.
 
----
+--------------------------------------------------------------------------------
 
 ## Table of Contents
 
@@ -18,34 +18,37 @@ Note: This pipeline can be adapted for other datasets, making it reusable for an
 7. License
 8. Contact
 
----
+--------------------------------------------------------------------------------
 
 ## Features
 
 - Converts DenGen VCF and metadata into Beacon-compatible formats
 - Generates cohort and variant metadata for MongoDB ingestion
 - Bash-based pipeline for easy automation
+- Includes cluster-side utilities for large-scale VCF manipulation
 - Reusable for other Beacon datasets with minor configuration changes
 
----
+--------------------------------------------------------------------------------
 
 ## Repository Structure
 
 .
-├── bin                     # Optional: helper executables or scripts
+├── bin                     # Cluster-side scripts for VCF manipulation
+│   ├── beacon_pipeline_anon.sh
+│   ├── merge_dengen_vcf_anon.sh
+│   └── normalize_vcf_snps_anon.sh
 ├── data                    # Raw input data
 │   └── dengen_annonymous_list_samples.txt
 ├── docs                    # Documentation
 ├── README.md
 ├── results                 # Generated Beacon-ready output
-└── src                     # Core scripts
-    ├── annonymous_dengen.sh
+└── src                     # Core scripts for metadata and cohort generation
     ├── chr_name_conv.txt
     ├── create_cohort.sh
     ├── dengen_merged_pipeline.sh
     └── insert_cohort.sh
 
----
+--------------------------------------------------------------------------------
 
 ## Prerequisites
 
@@ -56,9 +59,9 @@ Note: This pipeline can be adapted for other datasets, making it reusable for an
 
 Optional:
 
-- Python if any scripts rely on it (check src/ scripts)
+- HPC/cluster environment for large-scale VCF manipulation (bin/ scripts)
 
----
+--------------------------------------------------------------------------------
 
 ## Usage
 
@@ -75,48 +78,61 @@ bash src/dengen_merged_pipeline.sh
 
 This will:
 
-1. Anonymize metadata (annonymous_dengen.sh)
-2. Convert chromosome names (chr_name_conv.txt)
-3. Create the cohort (create_cohort.sh)
-4. Insert the cohort into the Beacon database (insert_cohort.sh)
+1. Normalize and merge VCFs (bin/ scripts)  
+2. Convert chromosome names (chr_name_conv.txt)  
+3. Create the cohort (create_cohort.sh)  
+4. Insert the cohort into the Beacon database (insert_cohort.sh)  
 
 ### 3. Inspect results
 
-- Output files will be placed in the results/ directory.
-- These files are ready for ingestion into a Beacon MongoDB instance.
+- Output files will be placed in the results/ directory.  
+- These files are ready for ingestion into a Beacon MongoDB instance.  
 
----
+--------------------------------------------------------------------------------
 
 ## Scripts Overview
 
+### Cluster-side (bin/)
+
 Script | Description
 -------|-------------
-annonymous_dengen.sh | Anonymizes DenGen sample metadata
+beacon_pipeline_anon.sh | Wrapper script to run the full VCF anonymization + normalization pipeline on cluster
+merge_dengen_vcf_anon.sh | Merges multiple anonymized VCFs into a single dataset
+normalize_vcf_snps_anon.sh | Normalizes SNPs in VCFs for Beacon compatibility
+
+### Metadata & Cohort (src/)
+
+Script | Description
+-------|-------------
 chr_name_conv.txt | Chromosome name conversion mapping
 create_cohort.sh | Generates cohort JSON/TSV files for Beacon
 insert_cohort.sh | Inserts cohort into MongoDB for Beacon
-dengen_merged_pipeline.sh | Master script to run the Beacon RI tools for the genomic_variants pipeline
+dengen_merged_pipeline.sh | Master script to run the full metadata/ingestion pipeline
 
----
+--------------------------------------------------------------------------------
 
 ## Data Flow
 
-Raw VCF + Metadata --> src/ scripts --> results/ (Beacon-ready files) --> MongoDB (Beacon)
+Raw VCF + Metadata  
+↓ (bin/ scripts on cluster)  
+Normalized + Merged VCF  
+↓ (src/ scripts)  
+Beacon-ready metadata in results/  
+↓  
+MongoDB (Beacon ingestion)  
 
-- The pipeline ensures that metadata is anonymized, chromosome names are standardized, and cohort/variant files conform to the Beacon schema.
-
----
+--------------------------------------------------------------------------------
 
 ## License
 
 MIT
 
----
+--------------------------------------------------------------------------------
 
 ## Contact
 
 For questions, suggestions, or issues:
 
-- Mauricio Moldes
+- Mauricio Moldes  
 - GitHub Issues: https://github.com/MauricioMoldes/dengen_beacon_data_generator/issues
 
