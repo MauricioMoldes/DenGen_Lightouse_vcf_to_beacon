@@ -16,12 +16,11 @@ mkdir -p "$RESULTS_DIR"
 # -----------------------------
 # Step 1: Prepare Beacon-ready VCF
 # -----------------------------
-VCF_INPUT="$VCF_DIR/dengen_2211_merged.v2.tags.vcf.gz"
 VCF_FINAL="$VCF_DIR/dengen_SNP_filtered.decomposed.renamed.vcf.gz"
 
 if [ ! -f "$VCF_FINAL" ]; then
     echo "[STEP 1] Running DenGen VCF pipeline..."
-    bash "$SRC_DIR/dengen_merged_pipeline.sh"
+    bash "$SRC_DIR/dengen_pipeline.sh"
 else
     echo "[STEP 1] Final VCF already exists: $VCF_FINAL, skipping pipeline."
 fi
