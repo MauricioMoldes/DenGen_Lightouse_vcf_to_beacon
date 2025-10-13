@@ -111,6 +111,6 @@ MIT License
 For questions, suggestions, or issues:
 
 - Mauricio Moldes
-- GitHub Issues: https://github.com/MauricioMoldes/dengen_beacon_data_generator/issues
+- GitHub Issues: https://github.com/MauricioMoldes/DenGen_Lightouse/issues
 
 
